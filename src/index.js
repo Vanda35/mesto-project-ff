@@ -1,3 +1,7 @@
+
+import './pages/index.css';
+import { initialCards } from './scripts/cards.js';
+
 const templateCard = document.querySelector("#card-template").content;
 const cardsContainer = document.querySelector(".places__list");
 
@@ -10,7 +14,7 @@ function createCard(cardData, deleteCard) {
 
   card.querySelector(".card__title").textContent = cardData.name;
 
-  deleteButton = card.querySelector(".card__delete-button");
+  const deleteButton = card.querySelector(".card__delete-button");
   deleteButton.addEventListener("click", () => deleteCard(card));
 
   return card;
