@@ -28,6 +28,7 @@ const linkInput = formElementNewCard.elements.link;
 
 const popupImageContainer = document.querySelector(".popup_type_image");
 const popupImage = popupImageContainer.querySelector(".popup__image");
+const popupImageCaption = popupImageContainer.querySelector(".popup__caption");
 
 initialCards.forEach(function (cardData) {
   cardsContainer.append(createCard(cardData, deleteCard, likeCard, openImage));
@@ -48,10 +49,10 @@ profileAddButton.addEventListener("click", function (evt) {
   openModal(popupNewCardContainer);
 });
 
-formElementEdit.addEventListener("submit", handleFormEditSubmit);
-formElementNewCard.addEventListener("submit", handleFormNewCardSubmit);
+formElementEdit.addEventListener("submit", processFormEditSubmit);
+formElementNewCard.addEventListener("submit", processFormNewCardSubmit);
 
-function handleFormEditSubmit(evt) {
+function processFormEditSubmit(evt) {
   evt.preventDefault();
 
   profileTitle.textContent = nameInput.value;
@@ -60,15 +61,15 @@ function handleFormEditSubmit(evt) {
   closeModal(popupEditContainer);
 }
 
-function handleFormNewCardSubmit(evt) {
+function processFormNewCardSubmit(evt) {
   evt.preventDefault();
 
   const newCard = {
     name: placeNameInput.value,
     link: linkInput.value,
   };
-  initialCards.push(newCard);
-  cardsContainer.prepend(createCard(newCard, deleteCard, likeCard));
+  cardsContainer.prepend(createCard(newCard, deleteCard, likeCard, openImage));
+
   formElementNewCard.reset();
 
   closeModal(popupNewCardContainer);
@@ -79,6 +80,7 @@ function openImage(evt) {
 
   popupImage.src = evt.target.src;
   popupImage.alt = evt.target.alt;
+  popupImageCaption.textContent = evt.target.alt;
 
   openModal(popupImageContainer);
 }
