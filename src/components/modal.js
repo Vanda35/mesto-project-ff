@@ -1,24 +1,12 @@
 export function openModal(formContainer) {
   formContainer.classList.add("popup_is-opened");
-
+  formContainer.addEventListener("click", closeOverlayOrButtonClick);
   document.addEventListener("keydown", processKey);
-
-  const popupCloseButton = formContainer.querySelector(".popup__close");
-  popupCloseButton.addEventListener(
-    "click",
-    function (evt) {
-      evt.stopPropagation();
-      closeModal(formContainer);
-    },
-    {once: true}
-  );
-
-  formContainer.addEventListener("click", closeOverlayClick);
 }
 
 export function closeModal(formContainer) {
   formContainer.classList.remove("popup_is-opened");
-  formContainer.removeEventListener("click", closeOverlayClick);
+  formContainer.removeEventListener("click", closeOverlayOrButtonClick);
   document.removeEventListener("keydown", processKey);
 }
 
@@ -29,8 +17,9 @@ function processKey(evt) {
   }
 }
 
-function closeOverlayClick({ currentTarget, target }) {
-  if (target === currentTarget) {
+function closeOverlayOrButtonClick({ currentTarget, target }) {
+  const popupCloseButton = currentTarget.querySelector(".popup__close");
+  if (target === currentTarget || target === popupCloseButton) {
     closeModal(currentTarget);
   }
 }
