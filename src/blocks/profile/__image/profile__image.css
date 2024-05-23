@@ -7,6 +7,26 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+}
+
+.profile__image:hover {
+  opacity: 0.8;
+}
+
+.profile__image:hover::after {
+ visibility: visible;
+}
+
+.profile__image::after {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  background: transparent url('../../../images/avatar-edit-icon.svg') center no-repeat;
+  width: 26px;
+  height: 26px;
+  visibility: hidden;
 }
 
 @media screen and (max-width: 740px) {
