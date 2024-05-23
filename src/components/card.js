@@ -1,31 +1,3 @@
-/*
-export const initialCards = [
-  {
-    name: "Архыз",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
-  },
-  {
-    name: "Челябинская область",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
-  },
-  {
-    name: "Иваново",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
-  },
-  {
-    name: "Камчатка",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
-  },
-  {
-    name: "Холмогорский район",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
-  },
-  {
-    name: "Байкал",
-    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
-  },
-];
-*/
 import { deleteCardFromServer, addRemoveLike } from "./api.js";
 
 const templateCard = document.querySelector("#card-template").content;
@@ -55,6 +27,9 @@ export function createCard(
   }
 
   const likeButton = card.querySelector(".card__like-button");
+  if (checkLike(currentUserId, cardData.likes)) {
+    likeButton.classList.add("card__like-button_is-active");
+  }
   likeButton.addEventListener("click", (evt) => likeCard(evt.target));
 
   cardImage.addEventListener("click", (evt) => openImage(evt));
@@ -63,8 +38,11 @@ export function createCard(
 }
 
 export function deleteCard(card) {
-  deleteCardFromServer(card.querySelector(".card__id").textContent);
-  card.remove();
+  deleteCardFromServer(card.querySelector(".card__id").textContent)
+  .then(card.remove())
+  .catch((err) => {
+    console.error(err);
+  });  
 }
 
 export function likeCard(currentButton) {
@@ -75,9 +53,20 @@ export function likeCard(currentButton) {
   addRemoveLike(card.querySelector(".card__id").textContent, addLike)
     .then((cardData) => {
       card.querySelector(".card__likes").textContent = cardData.likes.length;
+      currentButton.classList.toggle("card__like-button_is-active");
     })
     .catch((err) => {
       console.error(err);
-    });
-  currentButton.classList.toggle("card__like-button_is-active");
+    });  
+}
+
+function checkLike(userId, likeArray) {
+  let hasUserLike = false;
+  likeArray.forEach(element => {
+    if(element._id == userId) {
+      hasUserLike = true;
+      return hasUserLike;
+    }
+  });
+  return hasUserLike;
 }

@@ -1,14 +1,14 @@
 import "./pages/index.css";
-import { createCard, deleteCard, likeCard } from "./components/cards.js";
+import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openModal, closeModal } from "./components/modal.js";
 import {
   getInitialData,
   updateUserData,
   createNewCard,
   updateAvatar,
-  renderLoading,
 } from "./components/api.js";
-import { enableValidation } from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
+import { renderLoading } from "./components/utils.js";
 
 const cardsContainer = document.querySelector(".places__list");
 
@@ -38,10 +38,21 @@ const popupImageContainer = document.querySelector(".popup_type_image");
 const popupImage = popupImageContainer.querySelector(".popup__image");
 const popupImageCaption = popupImageContainer.querySelector(".popup__caption");
 
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
 let userId;
 
 profileImage.addEventListener("click", function (evt) {
   evt.preventDefault();
+  avatarInput.value = "";
+  clearValidation(popupNewAvatar, validationConfig);
   openModal(popupNewAvatar);
 });
 
@@ -51,11 +62,14 @@ profileEditButton.addEventListener("click", function (evt) {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
 
+  clearValidation(popupEditContainer, validationConfig);
   openModal(popupEditContainer);
 });
 
 profileAddButton.addEventListener("click", function (evt) {
   evt.preventDefault();
+  formElementNewCard.reset();
+  clearValidation(popupNewCardContainer, validationConfig);
   openModal(popupNewCardContainer);
 });
 
@@ -72,13 +86,12 @@ function processFormEditSubmit(evt) {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
       profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+      closeModal(popupEditContainer);
     })
     .catch((err) => {
       console.error(err);
     })
     .finally(() => renderLoading(false, popupEditContainer));
-
-  closeModal(popupEditContainer);
 }
 
 function processFormNewCardSubmit(evt) {
@@ -96,16 +109,13 @@ function processFormNewCardSubmit(evt) {
       cardsContainer.prepend(
         createCard(cardData, userId, deleteCard, likeCard, openImage)
       );
+      closeModal(popupNewCardContainer);
     })
     .catch((err) => {
       console.error(err);
     })
     .finally(() => renderLoading(false, popupNewCardContainer));
-
-  formElementNewCard.reset();
-
-  closeModal(popupNewCardContainer);
-}
+};
 
 function processFormNewAvatarSubmit(evt) {
   evt.preventDefault();
@@ -117,13 +127,12 @@ function processFormNewAvatarSubmit(evt) {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
       profileImage.style.backgroundImage = `url('${userData.avatar}')`;
+      closeModal(popupNewAvatar);
     })
     .catch((err) => {
       console.error(err);
     })
     .finally(() => renderLoading(false, popupNewAvatar));
-  avatarInput.value = "";
-  closeModal(popupNewAvatar);
 }
 
 function openImage(evt) {

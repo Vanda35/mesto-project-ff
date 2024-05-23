@@ -9,27 +9,13 @@ const config = {
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
 export const getUserData = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    // если ошибка, отклоняем промис
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
 export function getInitialData() {
@@ -44,12 +30,7 @@ export const updateUserData = (newName, newAbout) => {
       name: newName,
       about: newAbout,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
 export const createNewCard = (cardData) => {
@@ -60,12 +41,7 @@ export const createNewCard = (cardData) => {
       name: cardData.name,
       link: cardData.link,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
 export const deleteCardFromServer = (cardId) => {
@@ -84,12 +60,7 @@ export const addRemoveLike = (cardId, addLike) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: `${method}`,
     headers: config.headers,
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
 export const updateAvatar = (newAvatar) => {
@@ -99,19 +70,12 @@ export const updateAvatar = (newAvatar) => {
     body: JSON.stringify({
       avatar: newAvatar,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  });
+  }).then((res) => {return getFetchResult(res)});
 };
 
-export function renderLoading(isLoading, form) {
-  const saveButton = form.querySelector(".popup__button");
-  if (isLoading) {
-    saveButton.textContent = "Сохранение...";
-  } else {
-    saveButton.textContent = "Сохранить";
+function getFetchResult(res){
+  if (res.ok) {
+    return res.json();
   }
+  return Promise.reject(`Ошибка: ${res.status}`);  
 }
